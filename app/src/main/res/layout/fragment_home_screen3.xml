@@ -1,0 +1,39 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    tools:context=".HomeScreensActivity$PlaceholderFragment">
+
+    <android.support.v7.widget.GridLayout
+        android:id="@+id/appGridLayout5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:columnCount="@integer/gridlayout_column_count"
+        app:useDefaultMargins="true">
+
+        <!-- Programmatically add dialog_apps_app_view.xml -->
+    </android.support.v7.widget.GridLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:paddingTop="@dimen/activity_horizontal_margin"
+        android:paddingBottom="@dimen/activity_horizontal_margin"
+        android:background="#33000000" />
+
+    <android.support.v7.widget.GridLayout
+        android:id="@+id/appGridLayout6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:columnCount="@integer/gridlayout_column_count"
+        app:useDefaultMargins="true">
+
+        <!-- Programmatically add dialog_apps_app_view.xml -->
+    </android.support.v7.widget.GridLayout>
+</LinearLayout>
