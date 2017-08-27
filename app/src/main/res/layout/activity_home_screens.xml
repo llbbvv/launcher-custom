@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".HomeScreensActivity">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.matthewtamlin.sliding_intro_screen_library.indicators.DotIndicator
+        android:id="@+id/dotIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        app:unselectedDotDiameter="10dp"
+        app:selectedDotDiameter="20dp"
+        app:spacingBetweenDots="20dp"
+        app:selectedDotColor="#CCFFFFFF"
+        app:unselectedDotColor="#CCFFFFFF"
+        app:numberOfDots="10"
+        app:selectedDotIndex="0" />
+</RelativeLayout>
