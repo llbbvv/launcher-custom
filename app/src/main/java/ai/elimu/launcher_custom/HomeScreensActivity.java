@@ -1,12 +1,10 @@
 package ai.elimu.launcher_custom;
 
-import android.animation.ArgbEvaluator;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,17 +17,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.Theme;
+import com.andraskindler.parallaxviewpager.ParallaxViewPager;
 import com.matthewtamlin.sliding_intro_screen_library.indicators.DotIndicator;
 
 import ai.elimu.analytics.eventtracker.EventTracker;
-import ai.elimu.model.enums.content.LiteracySkill;
-import ai.elimu.model.enums.content.NumeracySkill;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,11 +31,9 @@ public class HomeScreensActivity extends AppCompatActivity {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
-    private ViewPager viewPager;
+    private ParallaxViewPager viewPager;
 
     private DotIndicator dotIndicator;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +48,8 @@ public class HomeScreensActivity extends AppCompatActivity {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        viewPager = (ViewPager) findViewById(ai.elimu.launcher_custom.R.id.container);
-//        viewPager.setBackgroundResource(ai.elimu.launcher_custom.R.drawable.background);
-        viewPager.setBackgroundColor(getResources().getColor(R.color.purple));
+        viewPager = (ParallaxViewPager) findViewById(ai.elimu.launcher_custom.R.id.container);
+        viewPager.setBackgroundResource(R.drawable.background_indigo);
         viewPager.setAdapter(mSectionsPagerAdapter);
 
         dotIndicator = (DotIndicator) findViewById(ai.elimu.launcher_custom.R.id.dotIndicator);
@@ -68,38 +58,6 @@ public class HomeScreensActivity extends AppCompatActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 Log.i(getClass().getName(), "onPageScrolled");
-
-                Integer color1 = getResources().getColor(R.color.purple);
-                Integer color2 = getResources().getColor(R.color.deep_purple);
-                Integer color3 = getResources().getColor(R.color.indigo);
-                Integer color4 = getResources().getColor(R.color.blue);
-
-                Integer[] colors = {color1, color2, color3, color4};
-
-                if(position < (mSectionsPagerAdapter.getCount() -1) && position < (colors.length - 1)) {
-                    viewPager.setBackgroundColor((Integer) new ArgbEvaluator().evaluate(positionOffset, colors[position], colors[position + 1]));
-
-                    float[] hsv = new float[3];
-                    int darkerColor = (Integer) new ArgbEvaluator().evaluate(positionOffset, colors[position], colors[position + 1]);
-                    Color.colorToHSV(darkerColor, hsv);
-                    hsv[2] *= 0.8f; // value component
-                    darkerColor = Color.HSVToColor(hsv);
-
-                    Window window = getWindow();
-                    window.setStatusBarColor(darkerColor);
-                } else {
-                    // the last page color
-                    viewPager.setBackgroundColor(colors[colors.length - 1]);
-
-                    float[] hsv = new float[3];
-                    int darkerColor = (Integer) new ArgbEvaluator().evaluate(positionOffset, colors[position], colors[position + 1]);
-                    Color.colorToHSV(darkerColor, hsv);
-                    hsv[2] *= 0.8f; // value component
-                    darkerColor = Color.HSVToColor(hsv);
-
-                    Window window = getWindow();
-                    window.setStatusBarColor(darkerColor);
-                }
             }
 
             @Override
