@@ -7,8 +7,20 @@ android {
         applicationId "ai.elimu.launcher_custom"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 1000001
-        versionName "1.0.1"
+        versionCode 1000003
+        versionName "1.0.3"
+    }
+
+    productFlavors {
+        en {
+            applicationIdSuffix ".en"
+            versionNameSuffix "-en"
+        }
+
+        so {
+            applicationIdSuffix ".so"
+            versionNameSuffix "-so"
+        }
     }
 
     lintOptions {
@@ -38,6 +50,7 @@ dependencies {
     compile 'com.android.support:gridlayout-v7:23.4.0'
     compile 'com.andraskindler.parallaxviewpager:parallaxviewpager:0.3.1'
     compile 'com.matthew-tamlin:sliding-intro-screen:3.2.0'
-    compile 'com.afollestad.material-dialogs:core:0.8.6.2'
+//    compile 'com.afollestad.material-dialogs:core:0.8.6.2'
+//    compile 'com.google.android:flexbox:0.3.0'
     testCompile 'junit:junit:4.12'
 }
