@@ -1,10 +1,8 @@
 package ai.elimu.launcher_custom;
 
-import android.content.ComponentName;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,22 +10,29 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.andraskindler.parallaxviewpager.ParallaxViewPager;
 import com.matthewtamlin.sliding_intro_screen_library.indicators.DotIndicator;
 
-import ai.elimu.analytics.eventtracker.EventTracker;
-
-import java.util.Arrays;
 import java.util.List;
 
+import ai.elimu.analytics.eventtracker.EventTracker;
+import ai.elimu.launcher_custom.model.AppCategory;
+import ai.elimu.launcher_custom.model.AppCollection;
+import ai.elimu.launcher_custom.model.AppGroup;
+import ai.elimu.model.gson.admin.ApplicationGson;
+
 public class HomeScreensActivity extends AppCompatActivity {
+
+    private static AppCollection appCollection;
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -37,7 +42,16 @@ public class HomeScreensActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i(getClass().getName(), "onCreate");
         super.onCreate(savedInstanceState);
+
+        if ("en".equals(BuildConfig.FLAVOR)) {
+            appCollection = AppCollectionGenerator.loadAppCollectionEnglish();
+        } else if ("so".equals(BuildConfig.FLAVOR)) {
+            appCollection = AppCollectionGenerator.loadAppCollectionSomali();
+        }
+        Log.i(getClass().getName(), "appCollection.getAppCategories().size(): " + appCollection.getAppCategories().size());
+
         setContentView(ai.elimu.launcher_custom.R.layout.activity_home_screens);
 
         getWindow().getDecorView().setSystemUiVisibility(
@@ -75,6 +89,7 @@ public class HomeScreensActivity extends AppCompatActivity {
         });
     }
 
+
     public static class PlaceholderFragment extends Fragment {
 
         private static final String ARG_SECTION_NUMBER = "section_number";
@@ -98,89 +113,81 @@ public class HomeScreensActivity extends AppCompatActivity {
             int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
             Log.i(getClass().getName(), "sectionNumber: " + sectionNumber);
 
-            int layoutIdentifier = getResources().getIdentifier("fragment_home_screen" + String.valueOf(sectionNumber), "layout", getActivity().getPackageName());
-            View rootView = inflater.inflate(layoutIdentifier, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_home_screen, container, false);
 
-            if (sectionNumber == 1) {
-                // 0. Logic
+            // Set category name
+            TextView textViewCategoryName = (TextView) rootView.findViewById(R.id.textViewCategoryName);
+            AppCategory appCategory = appCollection.getAppCategories().get(sectionNumber);
+            textViewCategoryName.setText(appCategory.getName());
 
-                GridLayout appGridLayout1 = (GridLayout) rootView.findViewById(ai.elimu.launcher_custom.R.id.appGridLayout1);
-                List<String> packageNames = Arrays.asList(
-                    // TODO
-                );
-                initializeCategory(packageNames, appGridLayout1);
-
-                GridLayout appGridLayout2 = (GridLayout) rootView.findViewById(ai.elimu.launcher_custom.R.id.appGridLayout2);
-                packageNames = Arrays.asList(
-                    // TODO
-                );
-                initializeCategory(packageNames, appGridLayout2);
-
-            } else if (sectionNumber == 2) {
-                // 1. Sounds
-
-                // TODO
-            } else if (sectionNumber == 3) {
-                // 2. Stories
-
-                // TODO
-            }  else if (sectionNumber == 4) {
-                // 3. Letter shapes
-
-                // TODO
-            }
+            LinearLayout linearLayoutAppGroupsContainer = (LinearLayout) rootView.findViewById(R.id.linearLayoutAppGroupsContainer);
+            initializeAppCategory(linearLayoutAppGroupsContainer, sectionNumber);
 
             return rootView;
         }
 
-        private void initializeCategory(List<String> packageNames, GridLayout appGridLayout) {
-            Log.i(getClass().getName(), "initializeCategory");
+        private void initializeAppCategory(LinearLayout linearLayoutAppGroupsContainer, int sectionNumber) {
+            Log.i(getClass().getName(), "initializeAppCategory");
 
-            Intent intent = new Intent(Intent.ACTION_MAIN, null);
-            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-            final PackageManager packageManager = getActivity().getPackageManager();
-            List<ResolveInfo> availableActivities = packageManager.queryIntentActivities(intent, 0);
-            for (ResolveInfo resolveInfo : availableActivities) {
-                final ActivityInfo activityInfo = resolveInfo.activityInfo;
-                Log.i(getClass().getName(), "activityInfo: " + activityInfo);
+            final AppCategory appCategory = appCollection.getAppCategories().get(sectionNumber);
+            Log.i(getClass().getName(), "appCategory.getName(): " + appCategory.getName());
 
-                Log.i(getClass().getName(), "activityInfo.packageName: " + activityInfo.packageName);
-                Log.i(getClass().getName(), "activityInfo.name: " + activityInfo.name);
+            List<AppGroup> appGroups = appCategory.getAppGroups();
+            Log.i(getClass().getName(), "appGroups.size(): " + appGroups.size());
 
-                final ComponentName componentName = new ComponentName(activityInfo.packageName, activityInfo.name);
-                Log.i(getClass().getName(), "componentName: " + componentName);
+            for (AppGroup appGroup : appGroups) {
+                Log.i(getClass().getName(), "appGroup.getApplications().size(): " + appGroup.getApplications().size());
 
-                CharSequence label = resolveInfo.loadLabel(packageManager);
-                Log.i(getClass().getName(), "label: " + label);
+                FlowLayout flowLayoutAppGroup = (FlowLayout) LayoutInflater.from(getActivity())
+                        .inflate(R.layout.fragment_home_screen_app_group, linearLayoutAppGroupsContainer, false);
 
-                Drawable icon = resolveInfo.loadIcon(packageManager);
-                Log.i(getClass().getName(), "icon: " + icon);
+                for (final ApplicationGson application : appGroup.getApplications()) {
+                    Log.i(getClass().getName(), "application.getPackageName(): " + application.getPackageName());
 
-                if (packageNames.contains(activityInfo.packageName)) {
-                    View appView = LayoutInflater.from(getActivity()).inflate(ai.elimu.launcher_custom.R.layout.dialog_apps_app_view, appGridLayout, false);
+                    LinearLayout linearLayoutAppView = (LinearLayout) LayoutInflater.from(getActivity())
+                            .inflate(R.layout.fragment_home_screen_app_group_app_view, flowLayoutAppGroup, false);
 
-                    ImageView appIconImageView = (ImageView) appView.findViewById(ai.elimu.launcher_custom.R.id.appIconImageView);
-                    appIconImageView.setImageDrawable(icon);
+                    final PackageManager packageManager = getActivity().getPackageManager();
 
-                    appIconImageView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Log.i(getClass().getName(), "appIconImageView onClick");
+                    // Set app icon
+                    try {
+                        Drawable icon = packageManager.getApplicationIcon(application.getPackageName());
+                        Log.i(getClass().getName(), "icon: " + icon);
+                        ImageView appIconImageView = (ImageView) linearLayoutAppView.findViewById(ai.elimu.launcher_custom.R.id.appIconImageView);
+                        appIconImageView.setImageDrawable(icon);
 
-                            Intent intent = new Intent(Intent.ACTION_MAIN);
-                            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-                            intent.setComponent(componentName);
-                            startActivity(intent);
+                        appIconImageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Log.i(getClass().getName(), "appIconImageView onClick");
 
-                            EventTracker.reportApplicationOpenedEvent(getContext(), activityInfo.packageName);
-                        }
-                    });
+                                Intent intent = packageManager.getLaunchIntentForPackage(application.getPackageName());
+                                intent.addCategory(Intent.CATEGORY_LAUNCHER);
+//                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                                startActivity(intent);
 
-                    Log.i(getClass().getName(), "appGridLayout: " + appGridLayout);
-                    Log.i(getClass().getName(), "appView: " + appView);
-                    appGridLayout.addView(appView);
+                                EventTracker.reportApplicationOpenedEvent(getContext(), application.getPackageName());
+                            }
+                        });
+
+                        flowLayoutAppGroup.addView(linearLayoutAppView);
+                    } catch (PackageManager.NameNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                    // Set app title
+                    try {
+                        ApplicationInfo applicationInfo = packageManager.getApplicationInfo(application.getPackageName(), 0);
+                        String applicationLabel = packageManager.getApplicationLabel(applicationInfo).toString();
+                        Log.i(getClass().getName(), "applicationLabel: " + applicationLabel);
+                        TextView appLabelTextView = (TextView) linearLayoutAppView.findViewById(R.id.textViewAppLabel);
+                        appLabelTextView.setText(applicationLabel);
+                    } catch (PackageManager.NameNotFoundException e) {
+                        e.printStackTrace();
+                    }
                 }
+
+                linearLayoutAppGroupsContainer.addView(flowLayoutAppGroup);
             }
         }
 
@@ -205,27 +212,17 @@ public class HomeScreensActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return PlaceholderFragment.newInstance(position + 1);
+            return PlaceholderFragment.newInstance(position);
         }
 
         @Override
         public int getCount() {
-            return 4;
+            return appCollection.getAppCategories().size();
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "SECTION 1";
-                case 1:
-                    return "SECTION 2";
-                case 2:
-                    return "SECTION 3";
-                case 3:
-                    return "SECTION 4";
-            }
-            return null;
+            return appCollection.getAppCategories().get(position).getName();
         }
     }
 

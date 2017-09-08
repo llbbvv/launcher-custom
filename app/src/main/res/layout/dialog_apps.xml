@@ -11,6 +11,6 @@
         app:columnCount="@integer/gridlayout_column_count"
         app:useDefaultMargins="true">
 
-        <!-- Programmatically add dialog_apps_app_view.xml -->
+        <!-- Programmatically add fragment_home_screen_app_group_app_view.xml_group_app_view.xml -->
     </android.support.v7.widget.GridLayout>
 </RelativeLayout>
