@@ -3,6 +3,7 @@ package ai.elimu.launcher_custom;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -151,7 +153,9 @@ public class HomeScreensActivity extends AppCompatActivity {
 
                     // Set app icon
                     try {
-                        Drawable icon = packageManager.getApplicationIcon(application.getPackageName());
+                        ApplicationInfo applicationInfo = packageManager.getApplicationInfo(application.getPackageName(), PackageManager.GET_META_DATA);
+                        Resources resources = packageManager.getResourcesForApplication(application.getPackageName());
+                        Drawable icon = resources.getDrawableForDensity(applicationInfo.icon, DisplayMetrics.DENSITY_XXXHIGH, null);
                         Log.i(getClass().getName(), "icon: " + icon);
                         ImageView appIconImageView = (ImageView) linearLayoutAppView.findViewById(ai.elimu.launcher_custom.R.id.appIconImageView);
                         appIconImageView.setImageDrawable(icon);
