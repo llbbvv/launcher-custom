@@ -15,7 +15,6 @@
         android:text="APPS" />
 
     <Button
-        android:id="@+id/app_synchronization"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/button"
