@@ -23,12 +23,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".AppsListActivity" />
-        <activity
             android:name=".HomeScreensActivity" />
-
-        <activity
-            android:name=".CategoryOverlayActivity" />
 
         <service
             android:name=".service.StatusBarService"

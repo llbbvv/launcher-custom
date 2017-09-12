@@ -15,15 +15,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(ai.elimu.launcher_custom.R.layout.activity_main);
 
-        Button button = (Button) findViewById(ai.elimu.launcher_custom.R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), AppsListActivity.class);
-                startActivity(intent);
-            }
-        });
-
         Intent intent = new Intent(getApplicationContext(), HomeScreensActivity.class);
         startActivity(intent);
 
