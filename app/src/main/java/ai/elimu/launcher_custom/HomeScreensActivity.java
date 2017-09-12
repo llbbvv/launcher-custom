@@ -63,13 +63,18 @@ public class HomeScreensActivity extends AppCompatActivity {
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
+        dotIndicator = (DotIndicator) findViewById(ai.elimu.launcher_custom.R.id.dotIndicator);
+    }
+
+    @Override
+    protected void onStart() {
+        Log.i(getClass().getName(), "onStart");
+        super.onStart();
+
         // Set up the ViewPager with the sections adapter.
         viewPager = (ParallaxViewPager) findViewById(ai.elimu.launcher_custom.R.id.container);
         viewPager.setBackgroundResource(R.drawable.background_indigo);
         viewPager.setAdapter(mSectionsPagerAdapter);
-
-        dotIndicator = (DotIndicator) findViewById(ai.elimu.launcher_custom.R.id.dotIndicator);
-
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -90,7 +95,6 @@ public class HomeScreensActivity extends AppCompatActivity {
             }
         });
     }
-
 
     public static class PlaceholderFragment extends Fragment {
 
@@ -146,20 +150,18 @@ public class HomeScreensActivity extends AppCompatActivity {
                 for (final ApplicationGson application : appGroup.getApplications()) {
                     Log.i(getClass().getName(), "application.getPackageName(): " + application.getPackageName());
 
-                    LinearLayout linearLayoutAppView = (LinearLayout) LayoutInflater.from(getActivity())
-                            .inflate(R.layout.fragment_home_screen_app_group_app_view, flowLayoutAppGroup, false);
-
                     final PackageManager packageManager = getActivity().getPackageManager();
 
-                    // Set app icon
                     try {
+                        // Set app icon
                         ApplicationInfo applicationInfo = packageManager.getApplicationInfo(application.getPackageName(), PackageManager.GET_META_DATA);
                         Resources resources = packageManager.getResourcesForApplication(application.getPackageName());
-                        Drawable icon = resources.getDrawableForDensity(applicationInfo.icon, DisplayMetrics.DENSITY_XXXHIGH, null);
+                        Drawable icon = resources.getDrawableForDensity(applicationInfo.icon, DisplayMetrics.DENSITY_XXHIGH, null);
                         Log.i(getClass().getName(), "icon: " + icon);
+                        LinearLayout linearLayoutAppView = (LinearLayout) LayoutInflater.from(getActivity())
+                                .inflate(R.layout.fragment_home_screen_app_group_app_view, flowLayoutAppGroup, false);
                         ImageView appIconImageView = (ImageView) linearLayoutAppView.findViewById(ai.elimu.launcher_custom.R.id.appIconImageView);
                         appIconImageView.setImageDrawable(icon);
-
                         appIconImageView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -174,24 +176,21 @@ public class HomeScreensActivity extends AppCompatActivity {
                             }
                         });
 
-                        flowLayoutAppGroup.addView(linearLayoutAppView);
-                    } catch (PackageManager.NameNotFoundException e) {
-                        e.printStackTrace();
-                    }
-
-                    // Set app title
-                    try {
-                        ApplicationInfo applicationInfo = packageManager.getApplicationInfo(application.getPackageName(), 0);
+                        // Set app title
                         String applicationLabel = packageManager.getApplicationLabel(applicationInfo).toString();
                         Log.i(getClass().getName(), "applicationLabel: " + applicationLabel);
                         TextView appLabelTextView = (TextView) linearLayoutAppView.findViewById(R.id.textViewAppLabel);
                         appLabelTextView.setText(applicationLabel);
+
+                        flowLayoutAppGroup.addView(linearLayoutAppView);
                     } catch (PackageManager.NameNotFoundException e) {
-                        e.printStackTrace();
+                        Log.e(getClass().getName(), null, e);
                     }
                 }
 
-                linearLayoutAppGroupsContainer.addView(flowLayoutAppGroup);
+                if (flowLayoutAppGroup.getChildCount() > 0) {
+                    linearLayoutAppGroupsContainer.addView(flowLayoutAppGroup);
+                }
             }
         }
 

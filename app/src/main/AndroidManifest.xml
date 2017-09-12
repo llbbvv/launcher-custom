@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ai.elimu.launcher_custom">
 
+    <!--<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />-->
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -27,6 +29,11 @@
 
         <activity
             android:name=".CategoryOverlayActivity" />
+
+        <service
+            android:name=".service.StatusBarService"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>

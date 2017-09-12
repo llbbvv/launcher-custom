@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import ai.elimu.launcher_custom.service.StatusBarService;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -24,6 +26,10 @@ public class MainActivity extends AppCompatActivity {
 
         Intent intent = new Intent(getApplicationContext(), HomeScreensActivity.class);
         startActivity(intent);
+
+        // Requires root
+//        Intent serviceIntent = new Intent(this, StatusBarService.class);
+//        startService(serviceIntent);
 
         finish();
     }
