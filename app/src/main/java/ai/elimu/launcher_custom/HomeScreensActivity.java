@@ -42,6 +42,8 @@ public class HomeScreensActivity extends AppCompatActivity {
 
     private DotIndicator dotIndicator;
 
+    private static int currentPosition = 1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.i(getClass().getName(), "onCreate");
@@ -64,12 +66,9 @@ public class HomeScreensActivity extends AppCompatActivity {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         dotIndicator = (DotIndicator) findViewById(ai.elimu.launcher_custom.R.id.dotIndicator);
-    }
 
-    @Override
-    protected void onStart() {
-        Log.i(getClass().getName(), "onStart");
-        super.onStart();
+
+        Log.i(getClass().getName(), "onCreate currentPosition: " + currentPosition);
 
         // Set up the ViewPager with the sections adapter.
         viewPager = (ParallaxViewPager) findViewById(ai.elimu.launcher_custom.R.id.container);
@@ -78,14 +77,16 @@ public class HomeScreensActivity extends AppCompatActivity {
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                Log.i(getClass().getName(), "onPageScrolled");
+//                Log.i(getClass().getName(), "onPageScrolled");
             }
 
             @Override
             public void onPageSelected(int position) {
                 Log.i(getClass().getName(), "onPageSelected");
+                Log.i(getClass().getName(), "position: " + position);
 
                 dotIndicator.setSelectedItem(position, true);
+                currentPosition = position;
             }
 
             @Override
@@ -96,6 +97,39 @@ public class HomeScreensActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStart() {
+        Log.i(getClass().getName(), "onStart");
+        super.onStart();
+
+        Log.i(getClass().getName(), "onStart currentPosition: " + currentPosition);
+    }
+
+    @Override
+    protected void onResume() {
+        Log.i(getClass().getName(), "onResume");
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.i(getClass().getName(), "onPause");
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.i(getClass().getName(), "onStop");
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.i(getClass().getName(), "onDestroy");
+        super.onDestroy();
+    }
+
+
     public static class PlaceholderFragment extends Fragment {
 
         private static final String ARG_SECTION_NUMBER = "section_number";
@@ -104,6 +138,10 @@ public class HomeScreensActivity extends AppCompatActivity {
         }
 
         public static PlaceholderFragment newInstance(int sectionNumber) {
+            Log.i(PlaceholderFragment.class.getName(), "newInstance");
+            Log.i(PlaceholderFragment.class.getName(), "newInstance sectionNumber: " + sectionNumber);
+            Log.i(PlaceholderFragment.class.getName(), "newInstance currentPosition: " + currentPosition);
+
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
@@ -116,8 +154,13 @@ public class HomeScreensActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
             Log.i(getClass().getName(), "onCreateView");
 
+            Log.i(getClass().getName(), "onCreateView currentPosition: " + currentPosition);
             int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
-            Log.i(getClass().getName(), "sectionNumber: " + sectionNumber);
+            Log.i(getClass().getName(), "onCreateView sectionNumber: " + sectionNumber);
+//            if ((sectionNumber == 0) && (currentPosition > 0)) {
+//                sectionNumber = currentPosition;
+//            }
+//            Log.i(getClass().getName(), "onCreateView sectionNumber: " + sectionNumber);
 
             View rootView = inflater.inflate(R.layout.fragment_home_screen, container, false);
 
@@ -135,20 +178,22 @@ public class HomeScreensActivity extends AppCompatActivity {
         private void initializeAppCategory(LinearLayout linearLayoutAppGroupsContainer, int sectionNumber) {
             Log.i(getClass().getName(), "initializeAppCategory");
 
+            Log.i(getClass().getName(), "initializeAppCategory sectionNumber: " + sectionNumber);
+
             final AppCategory appCategory = appCollection.getAppCategories().get(sectionNumber);
-            Log.i(getClass().getName(), "appCategory.getName(): " + appCategory.getName());
+            Log.i(getClass().getName(), "initializeAppCategory appCategory.getName(): " + appCategory.getName());
 
             List<AppGroup> appGroups = appCategory.getAppGroups();
-            Log.i(getClass().getName(), "appGroups.size(): " + appGroups.size());
+//            Log.i(getClass().getName(), "appGroups.size(): " + appGroups.size());
 
             for (AppGroup appGroup : appGroups) {
-                Log.i(getClass().getName(), "appGroup.getApplications().size(): " + appGroup.getApplications().size());
+//                Log.i(getClass().getName(), "appGroup.getApplications().size(): " + appGroup.getApplications().size());
 
                 FlowLayout flowLayoutAppGroup = (FlowLayout) LayoutInflater.from(getActivity())
                         .inflate(R.layout.fragment_home_screen_app_group, linearLayoutAppGroupsContainer, false);
 
                 for (final ApplicationGson application : appGroup.getApplications()) {
-                    Log.i(getClass().getName(), "application.getPackageName(): " + application.getPackageName());
+//                    Log.i(getClass().getName(), "application.getPackageName(): " + application.getPackageName());
 
                     final PackageManager packageManager = getActivity().getPackageManager();
 
@@ -157,7 +202,7 @@ public class HomeScreensActivity extends AppCompatActivity {
                         ApplicationInfo applicationInfo = packageManager.getApplicationInfo(application.getPackageName(), PackageManager.GET_META_DATA);
                         Resources resources = packageManager.getResourcesForApplication(application.getPackageName());
                         Drawable icon = resources.getDrawableForDensity(applicationInfo.icon, DisplayMetrics.DENSITY_XXHIGH, null);
-                        Log.i(getClass().getName(), "icon: " + icon);
+//                        Log.i(getClass().getName(), "icon: " + icon);
                         LinearLayout linearLayoutAppView = (LinearLayout) LayoutInflater.from(getActivity())
                                 .inflate(R.layout.fragment_home_screen_app_group_app_view, flowLayoutAppGroup, false);
                         ImageView appIconImageView = (ImageView) linearLayoutAppView.findViewById(ai.elimu.launcher_custom.R.id.appIconImageView);
@@ -178,13 +223,13 @@ public class HomeScreensActivity extends AppCompatActivity {
 
                         // Set app title
                         String applicationLabel = packageManager.getApplicationLabel(applicationInfo).toString();
-                        Log.i(getClass().getName(), "applicationLabel: " + applicationLabel);
+//                        Log.i(getClass().getName(), "applicationLabel: " + applicationLabel);
                         TextView appLabelTextView = (TextView) linearLayoutAppView.findViewById(R.id.textViewAppLabel);
                         appLabelTextView.setText(applicationLabel);
 
                         flowLayoutAppGroup.addView(linearLayoutAppView);
                     } catch (PackageManager.NameNotFoundException e) {
-                        Log.e(getClass().getName(), null, e);
+                        Log.e(getClass().getName(), "Application not installed: " + application.getPackageName());
                     }
                 }
 
@@ -196,7 +241,7 @@ public class HomeScreensActivity extends AppCompatActivity {
 
         @Override
         public void onStart() {
-            Log.i(getClass().getName(), "onCreateView");
+            Log.i(getClass().getName(), "onStart");
             super.onStart();
         }
 
@@ -207,6 +252,7 @@ public class HomeScreensActivity extends AppCompatActivity {
         }
     }
 
+
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -215,19 +261,24 @@ public class HomeScreensActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
+            Log.i(getClass().getName(), "getItem");
+            Log.i(getClass().getName(), "getItem position: " + position);
             return PlaceholderFragment.newInstance(position);
         }
 
         @Override
         public int getCount() {
+            Log.i(getClass().getName(), "getCount");
             return appCollection.getAppCategories().size();
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
+            Log.i(getClass().getName(), "getPageTitle");
             return appCollection.getAppCategories().get(position).getName();
         }
     }
+
 
     @Override
     public void onBackPressed() {
