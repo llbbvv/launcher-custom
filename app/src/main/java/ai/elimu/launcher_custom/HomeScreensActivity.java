@@ -51,6 +51,8 @@ public class HomeScreensActivity extends AppCompatActivity {
 
         if ("en".equals(BuildConfig.FLAVOR)) {
             appCollection = AppCollectionGenerator.loadAppCollectionEnglish();
+        } else if ("no".equals(BuildConfig.FLAVOR)) {
+            appCollection = AppCollectionGenerator.loadAppCollectionNorwegian();
         } else if ("so".equals(BuildConfig.FLAVOR)) {
             appCollection = AppCollectionGenerator.loadAppCollectionSomali();
         }

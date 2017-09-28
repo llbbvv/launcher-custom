@@ -7,14 +7,19 @@ android {
         applicationId "ai.elimu.launcher_custom"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 1001004
-        versionName "1.1.4"
+        versionCode 1001005
+        versionName "1.1.5"
     }
 
     productFlavors {
         en {
             applicationIdSuffix ".en"
             versionNameSuffix "-en"
+        }
+
+        no {
+            applicationIdSuffix ".no"
+            versionNameSuffix "-no"
         }
 
         so {
