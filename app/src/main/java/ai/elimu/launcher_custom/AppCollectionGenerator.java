@@ -19,7 +19,18 @@ public class AppCollectionGenerator {
 
         AppCollection appCollection = new AppCollection();
 
-        
+
+
+        return appCollection;
+    }
+
+    // TODO: fetch via Appstore library
+    public static AppCollection loadAppCollectionNorwegian() {
+        Log.i(AppCollectionGenerator.class.getName(), "loadAppCollectionNorwegian");
+
+        AppCollection appCollection = new AppCollection();
+
+
 
         return appCollection;
     }
