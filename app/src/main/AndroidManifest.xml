@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="ai.elimu.launcher_custom">
+
+    <!-- Handle "Manifest merger failed : uses-sdk:minSdkVersion 19 cannot be smaller than version 21 declared in library [ai.elimu.analytics:eventtracker:1.0.5]" -->
+    <uses-sdk tools:overrideLibrary="ai.elimu.analytics.eventtracker" />
 
     <!--<uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />-->
 

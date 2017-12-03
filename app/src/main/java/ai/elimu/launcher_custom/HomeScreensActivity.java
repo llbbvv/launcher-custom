@@ -203,7 +203,8 @@ public class HomeScreensActivity extends AppCompatActivity {
                         // Set app icon
                         ApplicationInfo applicationInfo = packageManager.getApplicationInfo(application.getPackageName(), PackageManager.GET_META_DATA);
                         Resources resources = packageManager.getResourcesForApplication(application.getPackageName());
-                        Drawable icon = resources.getDrawableForDensity(applicationInfo.icon, DisplayMetrics.DENSITY_XXHIGH, null);
+//                        Drawable icon = resources.getDrawableForDensity(applicationInfo.icon, DisplayMetrics.DENSITY_XXHIGH, null); // API 21
+                        Drawable icon = resources.getDrawableForDensity(applicationInfo.icon, DisplayMetrics.DENSITY_XXHIGH);
 //                        Log.i(getClass().getName(), "icon: " + icon);
                         LinearLayout linearLayoutAppView = (LinearLayout) LayoutInflater.from(getActivity())
                                 .inflate(R.layout.fragment_home_screen_app_group_app_view, flowLayoutAppGroup, false);
