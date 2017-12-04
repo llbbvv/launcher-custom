@@ -5,6 +5,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.andraskindler.parallaxviewpager.ParallaxViewPager;
@@ -203,7 +203,13 @@ public class HomeScreensActivity extends AppCompatActivity {
                         // Set app icon
                         ApplicationInfo applicationInfo = packageManager.getApplicationInfo(application.getPackageName(), PackageManager.GET_META_DATA);
                         Resources resources = packageManager.getResourcesForApplication(application.getPackageName());
-                        Drawable icon = resources.getDrawableForDensity(applicationInfo.icon, DisplayMetrics.DENSITY_XXHIGH, null);
+                        Drawable icon;
+                        if (Build.VERSION.SDK_INT > 21) {
+                            icon = resources.getDrawableForDensity(applicationInfo.icon, DisplayMetrics.DENSITY_XXHIGH, null);
+                        } else {
+                            //This method was deprecated in API level 22
+                            icon = resources.getDrawableForDensity(applicationInfo.icon, DisplayMetrics.DENSITY_XXHIGH);
+                        }
 //                        Log.i(getClass().getName(), "icon: " + icon);
                         LinearLayout linearLayoutAppView = (LinearLayout) LayoutInflater.from(getActivity())
                                 .inflate(R.layout.fragment_home_screen_app_group_app_view, flowLayoutAppGroup, false);
