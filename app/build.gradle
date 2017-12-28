@@ -40,13 +40,6 @@ android {
     }
 }
 
-repositories {
-    mavenLocal()
-    maven {
-        url "http://archiva.educativo.eu:8081/repository/internal/"
-    }
-}
-
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
