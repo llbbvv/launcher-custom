@@ -1,53 +1,52 @@
 package ai.elimu.launcher_custom;
 
-import android.app.Application;
-import android.util.Log;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import org.apache.commons.io.FileUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import ai.elimu.launcher_custom.model.AppCategory;
-import ai.elimu.launcher_custom.model.AppCollection;
-import ai.elimu.launcher_custom.model.AppGroup;
 import ai.elimu.model.gson.admin.ApplicationGson;
+import ai.elimu.model.gson.project.AppCategoryGson;
+import ai.elimu.model.gson.project.AppCollectionGson;
+import ai.elimu.model.gson.project.AppGroupGson;
+import timber.log.Timber;
 
 public class AppCollectionGenerator {
 
-    // TODO: fetch via Appstore library
-    public static AppCollection loadAppCollectionEnglish() {
-        Log.i(AppCollectionGenerator.class.getName(), "loadAppCollectionEnglish");
+    public static AppCollectionGson loadAppCollectionFromJsonFile(File jsonFile) {
+        Timber.i("loadAppCollectionFromJsonFile");
 
-        AppCollection appCollection = new AppCollection();
+        AppCollectionGson appCollection = new AppCollectionGson();
 
+        try {
+            String jsonResponse = FileUtils.readFileToString(jsonFile, "UTF-8");
+            JSONObject jsonObject = new JSONObject(jsonResponse);
+            Timber.d("jsonObject: " + jsonObject);
+            JSONObject jsonObjectAppCollection = jsonObject.getJSONObject("appCollection");
+            Timber.d("jsonObjectAppCollection: " + jsonObjectAppCollection);
 
-
-        return appCollection;
-    }
-
-    // TODO: fetch via Appstore library
-    public static AppCollection loadAppCollectionNorwegian() {
-        Log.i(AppCollectionGenerator.class.getName(), "loadAppCollectionNorwegian");
-
-        AppCollection appCollection = new AppCollection();
-
-
-
-        return appCollection;
-    }
-
-    // TODO: fetch via Appstore library
-    public static AppCollection loadAppCollectionSomali() {
-        Log.i(AppCollectionGenerator.class.getName(), "loadAppCollectionSomali");
-
-        AppCollection appCollection = new AppCollection();
-
-
+            Type type = new TypeToken<AppCollectionGson>(){}.getType();
+            appCollection = new Gson().fromJson(jsonObjectAppCollection.toString(), type);
+        } catch (JSONException e) {
+            Timber.e(e);
+        } catch (IOException e) {
+            Timber.e(e);
+        }
 
         return appCollection;
     }
 
-    private static AppGroup loadAppGroup(String... packageNames) {
-        AppGroup appGroup = new AppGroup();
+    private static AppGroupGson loadAppGroup(String... packageNames) {
+        AppGroupGson appGroup = new AppGroupGson();
 
         List<ApplicationGson> applications = new ArrayList<>();
         for (String packageName : packageNames) {
