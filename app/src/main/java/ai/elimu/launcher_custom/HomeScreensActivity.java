@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -24,17 +25,18 @@ import android.widget.TextView;
 import com.andraskindler.parallaxviewpager.ParallaxViewPager;
 import com.matthewtamlin.sliding_intro_screen_library.indicators.DotIndicator;
 
+import java.io.File;
 import java.util.List;
 
 import ai.elimu.analytics.eventtracker.EventTracker;
-import ai.elimu.launcher_custom.model.AppCategory;
-import ai.elimu.launcher_custom.model.AppCollection;
-import ai.elimu.launcher_custom.model.AppGroup;
 import ai.elimu.model.gson.admin.ApplicationGson;
+import ai.elimu.model.gson.project.AppCategoryGson;
+import ai.elimu.model.gson.project.AppCollectionGson;
+import ai.elimu.model.gson.project.AppGroupGson;
 
 public class HomeScreensActivity extends AppCompatActivity {
 
-    private static AppCollection appCollection;
+    private static AppCollectionGson appCollection;
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -49,13 +51,11 @@ public class HomeScreensActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "onCreate");
         super.onCreate(savedInstanceState);
 
-        if ("en".equals(BuildConfig.FLAVOR)) {
-            appCollection = AppCollectionGenerator.loadAppCollectionEnglish();
-        } else if ("no".equals(BuildConfig.FLAVOR)) {
-            appCollection = AppCollectionGenerator.loadAppCollectionNorwegian();
-        } else if ("so".equals(BuildConfig.FLAVOR)) {
-            appCollection = AppCollectionGenerator.loadAppCollectionSomali();
-        }
+        // The Appstore app should store an "app-collection.json" file when the Applications downloaded belong to a Project's AppCollection
+        File jsonFile = new File(Environment.getExternalStorageDirectory() + "/.elimu-ai/appstore/", "app-collection.json");
+        Log.i(AppCollectionGenerator.class.getName(), "jsonFile: " + jsonFile);
+        Log.i(AppCollectionGenerator.class.getName(), "jsonFile.exists(): " + jsonFile.exists());
+        appCollection = AppCollectionGenerator.loadAppCollectionFromJsonFile(jsonFile);
         Log.i(getClass().getName(), "appCollection.getAppCategories().size(): " + appCollection.getAppCategories().size());
 
         setContentView(ai.elimu.launcher_custom.R.layout.activity_home_screens);
@@ -168,7 +168,7 @@ public class HomeScreensActivity extends AppCompatActivity {
 
             // Set category name
             TextView textViewCategoryName = (TextView) rootView.findViewById(R.id.textViewCategoryName);
-            AppCategory appCategory = appCollection.getAppCategories().get(sectionNumber);
+            AppCategoryGson appCategory = appCollection.getAppCategories().get(sectionNumber);
             textViewCategoryName.setText(appCategory.getName());
 
             LinearLayout linearLayoutAppGroupsContainer = (LinearLayout) rootView.findViewById(R.id.linearLayoutAppGroupsContainer);
@@ -182,13 +182,13 @@ public class HomeScreensActivity extends AppCompatActivity {
 
             Log.i(getClass().getName(), "initializeAppCategory sectionNumber: " + sectionNumber);
 
-            final AppCategory appCategory = appCollection.getAppCategories().get(sectionNumber);
+            final AppCategoryGson appCategory = appCollection.getAppCategories().get(sectionNumber);
             Log.i(getClass().getName(), "initializeAppCategory appCategory.getName(): " + appCategory.getName());
 
-            List<AppGroup> appGroups = appCategory.getAppGroups();
+            List<AppGroupGson> appGroups = appCategory.getAppGroups();
 //            Log.i(getClass().getName(), "appGroups.size(): " + appGroups.size());
 
-            for (AppGroup appGroup : appGroups) {
+            for (AppGroupGson appGroup : appGroups) {
 //                Log.i(getClass().getName(), "appGroup.getApplications().size(): " + appGroup.getApplications().size());
 
                 FlowLayout flowLayoutAppGroup = (FlowLayout) LayoutInflater.from(getActivity())
