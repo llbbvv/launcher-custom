@@ -51,13 +51,6 @@ public class HomeScreensActivity extends AppCompatActivity {
         Log.i(getClass().getName(), "onCreate");
         super.onCreate(savedInstanceState);
 
-//        if ("en".equals(BuildConfig.FLAVOR)) {
-//            appCollection = AppCollectionGenerator.loadAppCollectionEnglish();
-//        } else if ("no".equals(BuildConfig.FLAVOR)) {
-//            appCollection = AppCollectionGenerator.loadAppCollectionNorwegian();
-//        } else if ("so".equals(BuildConfig.FLAVOR)) {
-//            appCollection = AppCollectionGenerator.loadAppCollectionSomali();
-//        }
         // The Appstore app should store an "app-collection.json" file when the Applications downloaded belong to a Project's AppCollection
         File jsonFile = new File(Environment.getExternalStorageDirectory() + "/.elimu-ai/appstore/", "app-collection.json");
         Log.i(AppCollectionGenerator.class.getName(), "jsonFile: " + jsonFile);
