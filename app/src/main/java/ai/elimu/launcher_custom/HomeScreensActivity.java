@@ -68,7 +68,7 @@ public class HomeScreensActivity extends AppCompatActivity {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         dotIndicator = (DotIndicator) findViewById(ai.elimu.launcher_custom.R.id.dotIndicator);
-
+        dotIndicator.setNumberOfItems(appCollection.getAppCategories().size());
 
         Log.i(getClass().getName(), "onCreate currentPosition: " + currentPosition);
 
