@@ -56,13 +56,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Ask for read permission from AppCollectionProvider to get the AppCollection
-        int permissionCheckReadAppCollectionProvider = ContextCompat.checkSelfPermission(this, PERMISSION_READ_APP_COLLECTION_PROVIDER);
-        if (permissionCheckReadAppCollectionProvider != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{PERMISSION_READ_APP_COLLECTION_PROVIDER}, PERMISSION_REQUEST_READ_APP_COLLECTION_PROVIDER);
-            return;
-        }
-
         // Check for valid license
         Uri uri = Uri.parse("content://ai.elimu.appstore.provider/appCollection");
         Cursor cursor = getContentResolver().query(uri, null, null, null, null);
