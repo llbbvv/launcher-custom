@@ -20,6 +20,7 @@ import ai.elimu.model.gson.project.AppCollectionGson;
 import ai.elimu.model.gson.project.AppGroupGson;
 import timber.log.Timber;
 
+@Deprecated
 public class AppCollectionGenerator {
 
     public static AppCollectionGson loadAppCollectionFromJsonFile(File jsonFile) {

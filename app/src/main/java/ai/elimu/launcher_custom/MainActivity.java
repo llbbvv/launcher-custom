@@ -3,16 +3,12 @@ package ai.elimu.launcher_custom;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 
-import ai.elimu.launcher_custom.service.StatusBarService;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,27 +17,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        // Log config
-        if (BuildConfig.DEBUG) {
-            // Log everything
-            Timber.plant(new Timber.DebugTree());
-        } else {
-            // Only log warnings and errors
-            Timber.plant(new Timber.Tree() {
-                @Override
-                protected void log(int priority, String tag, String message, Throwable throwable) {
-                    if (priority == Log.WARN) {
-                        Log.w(tag, message);
-                    } else if (priority == Log.ERROR) {
-                        Log.e(tag, message);
-                    }
-                }
-            });
-        }
         Timber.i("onCreate");
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_main);
 
         // Ask for read permission (needed for getting AppCollection from SD card)
         int permissionCheckReadExternalStorage = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);

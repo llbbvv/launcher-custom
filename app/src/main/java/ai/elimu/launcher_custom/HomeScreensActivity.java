@@ -1,6 +1,7 @@
 package ai.elimu.launcher_custom;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
@@ -8,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -26,6 +28,7 @@ import com.andraskindler.parallaxviewpager.ParallaxViewPager;
 import com.matthewtamlin.sliding_intro_screen_library.indicators.DotIndicator;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import ai.elimu.analytics.eventtracker.EventTracker;
@@ -33,10 +36,11 @@ import ai.elimu.model.gson.admin.ApplicationGson;
 import ai.elimu.model.gson.project.AppCategoryGson;
 import ai.elimu.model.gson.project.AppCollectionGson;
 import ai.elimu.model.gson.project.AppGroupGson;
+import timber.log.Timber;
 
 public class HomeScreensActivity extends AppCompatActivity {
 
-    private static AppCollectionGson appCollection;
+    private static List<AppCategoryGson> appCategories;
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -52,11 +56,25 @@ public class HomeScreensActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // The Appstore app should store an "app-collection.json" file when the Applications downloaded belong to a Project's AppCollection
+        // TODO: replace this with ContentProvider solution
         File jsonFile = new File(Environment.getExternalStorageDirectory() + "/.elimu-ai/appstore/", "app-collection.json");
         Log.i(AppCollectionGenerator.class.getName(), "jsonFile: " + jsonFile);
         Log.i(AppCollectionGenerator.class.getName(), "jsonFile.exists(): " + jsonFile.exists());
-        appCollection = AppCollectionGenerator.loadAppCollectionFromJsonFile(jsonFile);
+        AppCollectionGson appCollection = AppCollectionGenerator.loadAppCollectionFromJsonFile(jsonFile);
         Log.i(getClass().getName(), "appCollection.getAppCategories().size(): " + appCollection.getAppCategories().size());
+
+        // Hide AppCategories that have been un-checked in the SettingsActivity
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        appCategories = new ArrayList<>();
+        for (AppCategoryGson appCategory : appCollection.getAppCategories()) {
+            String preferenceKey = "appCategoryId_" + appCategory.getId();
+            Timber.i("preferenceKey: " + preferenceKey);
+            boolean isAppCategoryHidden = !sharedPreferences.getBoolean(preferenceKey, true);
+            Timber.i("isAppCategoryHidden: " + isAppCategoryHidden);
+            if (!isAppCategoryHidden) {
+                appCategories.add(appCategory);
+            }
+        }
 
         setContentView(ai.elimu.launcher_custom.R.layout.activity_home_screens);
 
@@ -168,7 +186,7 @@ public class HomeScreensActivity extends AppCompatActivity {
 
             // Set category name
             TextView textViewCategoryName = (TextView) rootView.findViewById(R.id.textViewCategoryName);
-            AppCategoryGson appCategory = appCollection.getAppCategories().get(sectionNumber);
+            AppCategoryGson appCategory = appCategories.get(sectionNumber);
             textViewCategoryName.setText(appCategory.getName());
 
             LinearLayout linearLayoutAppGroupsContainer = (LinearLayout) rootView.findViewById(R.id.linearLayoutAppGroupsContainer);
@@ -182,7 +200,7 @@ public class HomeScreensActivity extends AppCompatActivity {
 
             Log.i(getClass().getName(), "initializeAppCategory sectionNumber: " + sectionNumber);
 
-            final AppCategoryGson appCategory = appCollection.getAppCategories().get(sectionNumber);
+            final AppCategoryGson appCategory = appCategories.get(sectionNumber);
             Log.i(getClass().getName(), "initializeAppCategory appCategory.getName(): " + appCategory.getName());
 
             List<AppGroupGson> appGroups = appCategory.getAppGroups();
@@ -277,13 +295,13 @@ public class HomeScreensActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             Log.i(getClass().getName(), "getCount");
-            return appCollection.getAppCategories().size();
+            return appCategories.size();
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             Log.i(getClass().getName(), "getPageTitle");
-            return appCollection.getAppCategories().get(position).getName();
+            return appCategories.get(position).getName();
         }
     }
 
