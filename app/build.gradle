@@ -34,7 +34,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    compile 'ai.elimu:model:1.1.67'
+    compile 'ai.elimu:model:1.1.70'
 
 //    compile 'ai.elimu.analytics:eventtracker:1.0.5'
     compile(name: 'ai.elimu.analytics.eventtracker-1000005', ext:'aar')
