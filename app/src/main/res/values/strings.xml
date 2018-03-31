@@ -6,10 +6,4 @@
 
     <!-- AppCategories settings -->
     <string name="pref_header_app_categories">AppCategories</string>
-
-    <!-- SwitchPreference Example -->
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
-    </string>
 </resources>

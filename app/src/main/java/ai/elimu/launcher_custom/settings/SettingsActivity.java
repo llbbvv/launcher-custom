@@ -17,7 +17,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.MenuItem;
 
 import java.io.File;
 import java.util.List;
@@ -42,7 +41,7 @@ import static ai.elimu.launcher_custom.MainActivity.PERMISSION_REQUEST_READ_EXTE
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
-public class SettingsActivity extends AppCompatPreferenceActivity {
+public class SettingsActivity extends PreferenceActivity {
 
     private static List<AppCategoryGson> appCategories;
 
@@ -137,7 +136,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             Timber.i("AppCategoriesPreferenceFragment onCreate");
             super.onCreate(savedInstanceState);
 
-//            addPreferencesFromResource(R.xml.pref_app_categories);
             // Create one SwitchPreference per AppCategory
             PreferenceScreen preferenceScreen = getPreferenceManager().createPreferenceScreen(getActivity());
             for (AppCategoryGson appCategory : appCategories) {
@@ -154,20 +152,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 preferenceScreen.addPreference(switchPreference);
             }
             setPreferenceScreen(preferenceScreen);
-
-            setHasOptionsMenu(true);
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            Timber.i("AppCategoriesPreferenceFragment onOptionsItemSelected");
-
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), SettingsActivity.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
         }
     }
 }
