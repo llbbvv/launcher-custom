@@ -11,7 +11,6 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
-import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -54,8 +53,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         Timber.i("onCreate");
         super.onCreate(savedInstanceState);
 
-        setupActionBar();
-
         // The Appstore app should store an "app-collection.json" file when the Applications downloaded belong to a Project's AppCollection
         // TODO: replace this with ContentProvider solution
         File jsonFile = new File(Environment.getExternalStorageDirectory() + "/.elimu-ai/appstore/", "app-collection.json");
@@ -64,18 +61,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         AppCollectionGson appCollection = AppCollectionGenerator.loadAppCollectionFromJsonFile(jsonFile);
         Log.i(getClass().getName(), "appCollection.getAppCategories().size(): " + appCollection.getAppCategories().size());
         appCategories = appCollection.getAppCategories();
-    }
-
-    /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
-     */
-    private void setupActionBar() {
-        Timber.i("setupActionBar");
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            // Show the Up button in the action bar.
-//            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
     }
 
     /**
