@@ -69,6 +69,7 @@ public class HomeScreensActivity extends AppCompatActivity {
         appCategories = new ArrayList<>();
         for (AppCategoryGson appCategory : appCollection.getAppCategories()) {
             String preferenceKey = PreferenceKeyHelper.getPreferenceKey(appCategory);
+            Timber.i("preferenceKey: " + preferenceKey);
             boolean isAppCategoryHidden = !sharedPreferences.getBoolean(preferenceKey, true);
             Timber.i("isAppCategoryHidden: " + isAppCategoryHidden);
             if (!isAppCategoryHidden) {

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
@@ -126,8 +128,7 @@ public class SettingsActivity extends PreferenceActivity {
     }
 
     /**
-     * This fragment shows AppCategory preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
+     * This fragment shows AppCategory preferences only.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class AppCategoriesPreferenceFragment extends PreferenceFragment {
@@ -136,10 +137,27 @@ public class SettingsActivity extends PreferenceActivity {
             Timber.i("AppCategoriesPreferenceFragment onCreate");
             super.onCreate(savedInstanceState);
 
+            // Check if the user has previously marked one or more AppCategories to be hidden
+            boolean isOneOrMoreAppCategoriesHidden = false;
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            for (AppCategoryGson appCategory : appCategories) {
+                String preferenceKey = PreferenceKeyHelper.getPreferenceKey(appCategory);
+                Timber.i("preferenceKey: " + preferenceKey);
+                Timber.i("sharedPreferences.contains(preferenceKey): " + sharedPreferences.contains(preferenceKey));
+                if (sharedPreferences.contains(preferenceKey)) {
+                    boolean isAppCategoryHidden = !sharedPreferences.getBoolean(preferenceKey, true);
+                    if (!isAppCategoryHidden) {
+                        isOneOrMoreAppCategoriesHidden = true;
+                    }
+                }
+            }
+            Timber.i("isOneOrMoreAppCategoriesHidden: " + isOneOrMoreAppCategoriesHidden);
+
             // Create one SwitchPreference per AppCategory
             PreferenceScreen preferenceScreen = getPreferenceManager().createPreferenceScreen(getActivity());
             for (AppCategoryGson appCategory : appCategories) {
                 String preferenceKey = PreferenceKeyHelper.getPreferenceKey(appCategory);
+                Timber.i("preferenceKey: " + preferenceKey);
 
                 String preferenceTitle = appCategory.getName();
                 Timber.i("preferenceTitle: " + preferenceTitle);
@@ -147,7 +165,15 @@ public class SettingsActivity extends PreferenceActivity {
                 SwitchPreference switchPreference = new SwitchPreference(getActivity());
                 switchPreference.setKey(preferenceKey);
                 switchPreference.setTitle(preferenceTitle);
-                switchPreference.setDefaultValue(true);
+                if (isOneOrMoreAppCategoriesHidden) {
+                    // To prevent automatic addition of new AppCategories added in the future, set default value to false
+                    // if the user has already marked one or more AppCategories to be excluded. Typically, if the user
+                    // has chosen to only display one AppCategory, we don't want new AppCategories to be automatically
+                    // added to the Launcher once they are added to the website.
+                    switchPreference.setDefaultValue(false);
+                } else {
+                    switchPreference.setDefaultValue(true);
+                }
 
                 preferenceScreen.addPreference(switchPreference);
             }
