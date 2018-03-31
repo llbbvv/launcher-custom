@@ -1,8 +1,10 @@
 package ai.elimu.launcher_custom.settings;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,6 +13,9 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -23,6 +28,8 @@ import ai.elimu.launcher_custom.util.PreferenceKeyHelper;
 import ai.elimu.model.gson.project.AppCategoryGson;
 import ai.elimu.model.gson.project.AppCollectionGson;
 import timber.log.Timber;
+
+import static ai.elimu.launcher_custom.MainActivity.PERMISSION_REQUEST_READ_EXTERNAL_STORAGE;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -53,6 +60,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         Timber.i("onCreate");
         super.onCreate(savedInstanceState);
 
+        // Ask for read permission (needed for getting AppCollection from SD card)
+        int permissionCheckReadExternalStorage = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (permissionCheckReadExternalStorage != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_READ_EXTERNAL_STORAGE);
+            return;
+        }
+
         // The Appstore app should store an "app-collection.json" file when the Applications downloaded belong to a Project's AppCollection
         // TODO: replace this with ContentProvider solution
         File jsonFile = new File(Environment.getExternalStorageDirectory() + "/.elimu-ai/appstore/", "app-collection.json");
@@ -61,6 +75,27 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         AppCollectionGson appCollection = AppCollectionGenerator.loadAppCollectionFromJsonFile(jsonFile);
         Log.i(getClass().getName(), "appCollection.getAppCategories().size(): " + appCollection.getAppCategories().size());
         appCategories = appCollection.getAppCategories();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Timber.i("onRequestPermissionsResult");
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSION_REQUEST_READ_EXTERNAL_STORAGE) {
+            if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                // Permission granted
+
+                // Restart application
+                Intent intent = getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            } else {
+                // Permission denied
+
+                finish();
+            }
+        }
     }
 
     /**
