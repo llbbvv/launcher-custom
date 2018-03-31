@@ -20,6 +20,7 @@ import java.util.List;
 
 import ai.elimu.launcher_custom.AppCollectionGenerator;
 import ai.elimu.launcher_custom.R;
+import ai.elimu.launcher_custom.util.PreferenceKeyHelper;
 import ai.elimu.model.gson.project.AppCategoryGson;
 import ai.elimu.model.gson.project.AppCollectionGson;
 import timber.log.Timber;
@@ -120,8 +121,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // Create one SwitchPreference per AppCategory
             PreferenceScreen preferenceScreen = getPreferenceManager().createPreferenceScreen(getActivity());
             for (AppCategoryGson appCategory : appCategories) {
-                String preferenceKey = "appCategoryId_" + appCategory.getId();
-                Timber.i("preferenceKey: " + preferenceKey);
+                String preferenceKey = PreferenceKeyHelper.getPreferenceKey(appCategory);
 
                 String preferenceTitle = appCategory.getName();
                 Timber.i("preferenceTitle: " + preferenceTitle);
