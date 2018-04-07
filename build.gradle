@@ -12,13 +12,16 @@ buildscript {
     }
 }
 
+ext {
+    supportLibVersion = "26.0.1"
+}
+
 allprojects {
     repositories {
         mavenLocal()
         jcenter()
-        maven {
-            url "https://dl.bintray.com/elimu-ai/maven/"
-        }
+        maven { url 'https://maven.google.com' }
+        maven { url "https://dl.bintray.com/elimu-ai/maven/" }
         flatDir {
             dirs 'libs'
         }
