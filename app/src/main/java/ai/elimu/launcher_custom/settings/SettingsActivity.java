@@ -43,7 +43,7 @@ import static ai.elimu.launcher_custom.MainActivity.PERMISSION_REQUEST_READ_EXTE
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends AppCompatPreferenceActivity {
 
     private static List<AppCategoryGson> appCategories;
 
