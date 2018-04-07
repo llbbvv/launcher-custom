@@ -1,28 +1,36 @@
 package ai.elimu.launcher_custom.settings;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
-import android.support.v7.app.ActionBar;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.MenuItem;
 
 import java.io.File;
 import java.util.List;
 
 import ai.elimu.launcher_custom.AppCollectionGenerator;
 import ai.elimu.launcher_custom.R;
+import ai.elimu.launcher_custom.util.PreferenceKeyHelper;
 import ai.elimu.model.gson.project.AppCategoryGson;
 import ai.elimu.model.gson.project.AppCollectionGson;
 import timber.log.Timber;
+
+import static ai.elimu.launcher_custom.MainActivity.PERMISSION_REQUEST_READ_EXTERNAL_STORAGE;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -35,7 +43,7 @@ import timber.log.Timber;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
-public class SettingsActivity extends AppCompatPreferenceActivity {
+public class SettingsActivity extends PreferenceActivity {
 
     private static List<AppCategoryGson> appCategories;
 
@@ -53,7 +61,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         Timber.i("onCreate");
         super.onCreate(savedInstanceState);
 
-        setupActionBar();
+        // Ask for read permission (needed for getting AppCollection from SD card)
+        int permissionCheckReadExternalStorage = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (permissionCheckReadExternalStorage != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_READ_EXTERNAL_STORAGE);
+            return;
+        }
 
         // The Appstore app should store an "app-collection.json" file when the Applications downloaded belong to a Project's AppCollection
         // TODO: replace this with ContentProvider solution
@@ -65,15 +78,24 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         appCategories = appCollection.getAppCategories();
     }
 
-    /**
-     * Set up the {@link android.app.ActionBar}, if the API is available.
-     */
-    private void setupActionBar() {
-        Timber.i("setupActionBar");
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            // Show the Up button in the action bar.
-//            actionBar.setDisplayHomeAsUpEnabled(true);
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Timber.i("onRequestPermissionsResult");
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSION_REQUEST_READ_EXTERNAL_STORAGE) {
+            if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                // Permission granted
+
+                // Restart application
+                Intent intent = getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
+            } else {
+                // Permission denied
+
+                finish();
+            }
         }
     }
 
@@ -106,8 +128,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     }
 
     /**
-     * This fragment shows AppCategory preferences only. It is used when the
-     * activity is showing a two-pane settings UI.
+     * This fragment shows AppCategory preferences only.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static class AppCategoriesPreferenceFragment extends PreferenceFragment {
@@ -116,11 +137,26 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             Timber.i("AppCategoriesPreferenceFragment onCreate");
             super.onCreate(savedInstanceState);
 
-//            addPreferencesFromResource(R.xml.pref_app_categories);
+            // Check if the user has previously marked one or more AppCategories to be hidden
+            boolean isOneOrMoreAppCategoriesHidden = false;
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            for (AppCategoryGson appCategory : appCategories) {
+                String preferenceKey = PreferenceKeyHelper.getPreferenceKey(appCategory);
+                Timber.i("preferenceKey: " + preferenceKey);
+                Timber.i("sharedPreferences.contains(preferenceKey): " + sharedPreferences.contains(preferenceKey));
+                if (sharedPreferences.contains(preferenceKey)) {
+                    boolean isAppCategoryHidden = !sharedPreferences.getBoolean(preferenceKey, true);
+                    if (!isAppCategoryHidden) {
+                        isOneOrMoreAppCategoriesHidden = true;
+                    }
+                }
+            }
+            Timber.i("isOneOrMoreAppCategoriesHidden: " + isOneOrMoreAppCategoriesHidden);
+
             // Create one SwitchPreference per AppCategory
             PreferenceScreen preferenceScreen = getPreferenceManager().createPreferenceScreen(getActivity());
             for (AppCategoryGson appCategory : appCategories) {
-                String preferenceKey = "appCategoryId_" + appCategory.getId();
+                String preferenceKey = PreferenceKeyHelper.getPreferenceKey(appCategory);
                 Timber.i("preferenceKey: " + preferenceKey);
 
                 String preferenceTitle = appCategory.getName();
@@ -129,25 +165,19 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 SwitchPreference switchPreference = new SwitchPreference(getActivity());
                 switchPreference.setKey(preferenceKey);
                 switchPreference.setTitle(preferenceTitle);
-                switchPreference.setDefaultValue(true);
+                if (isOneOrMoreAppCategoriesHidden) {
+                    // To prevent automatic addition of new AppCategories added in the future, set default value to false
+                    // if the user has already marked one or more AppCategories to be excluded. Typically, if the user
+                    // has chosen to only display one AppCategory, we don't want new AppCategories to be automatically
+                    // added to the Launcher once they are added to the website.
+                    switchPreference.setDefaultValue(false);
+                } else {
+                    switchPreference.setDefaultValue(true);
+                }
 
                 preferenceScreen.addPreference(switchPreference);
             }
             setPreferenceScreen(preferenceScreen);
-
-            setHasOptionsMenu(true);
-        }
-
-        @Override
-        public boolean onOptionsItemSelected(MenuItem item) {
-            Timber.i("AppCategoriesPreferenceFragment onOptionsItemSelected");
-
-            int id = item.getItemId();
-            if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), SettingsActivity.class));
-                return true;
-            }
-            return super.onOptionsItemSelected(item);
         }
     }
 }

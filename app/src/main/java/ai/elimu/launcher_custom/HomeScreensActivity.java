@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ai.elimu.analytics.eventtracker.EventTracker;
+import ai.elimu.launcher_custom.util.PreferenceKeyHelper;
 import ai.elimu.model.gson.admin.ApplicationGson;
 import ai.elimu.model.gson.project.AppCategoryGson;
 import ai.elimu.model.gson.project.AppCollectionGson;
@@ -67,7 +68,7 @@ public class HomeScreensActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         appCategories = new ArrayList<>();
         for (AppCategoryGson appCategory : appCollection.getAppCategories()) {
-            String preferenceKey = "appCategoryId_" + appCategory.getId();
+            String preferenceKey = PreferenceKeyHelper.getPreferenceKey(appCategory);
             Timber.i("preferenceKey: " + preferenceKey);
             boolean isAppCategoryHidden = !sharedPreferences.getBoolean(preferenceKey, true);
             Timber.i("isAppCategoryHidden: " + isAppCategoryHidden);
