@@ -51,5 +51,9 @@
             android:name=".service.StatusBarService"
             android:enabled="true"
             android:exported="true" />
+
+        <!--<meta-data-->
+            <!--android:name="io.fabric.ApiKey"-->
+            <!--android:value="api-key-value" />-->
     </application>
 </manifest>
