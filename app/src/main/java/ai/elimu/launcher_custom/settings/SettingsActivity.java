@@ -3,7 +3,6 @@ package ai.elimu.launcher_custom.settings;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
@@ -24,7 +23,6 @@ import java.io.File;
 import java.util.List;
 
 import ai.elimu.launcher_custom.AppCollectionGenerator;
-import ai.elimu.launcher_custom.MainActivity;
 import ai.elimu.launcher_custom.R;
 import ai.elimu.launcher_custom.util.PreferenceKeyHelper;
 import ai.elimu.model.gson.project.AppCategoryGson;
@@ -69,6 +67,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             return;
         }
 
+        loadAppCollection();
+    }
+
+    private void loadAppCollection() {
+        Timber.i("loadAppCollection");
+
         // The Appstore app should store an "app-collection.json" file when the Applications downloaded belong to a Project's AppCollection
         // TODO: replace this with ContentProvider solution
         File jsonFile = new File(Environment.getExternalStorageDirectory() + "/.elimu-ai/appstore/", "app-collection.json");
@@ -88,10 +92,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 Timber.i("Permission granted");
 
-                // Restart Activity
-                Intent intent = new Intent(this, SettingsActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                loadAppCollection();
             } else {
                 Timber.w("Permission denied");
 

@@ -2,15 +2,20 @@ package ai.elimu.launcher_custom;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
+
+import java.util.Map;
+import java.util.Set;
 
 import timber.log.Timber;
 
@@ -46,11 +51,16 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        Set<String> sharedPreferencesMapKeySet = sharedPreferences.getAll().keySet();
+        Timber.i("sharedPreferencesMapKeySet: " + sharedPreferencesMapKeySet);
+        // TODO: if empty (first-time launch), redirect user to the SettingsActivity
+
         launchHomeScreensActivity();
     }
 
     private void launchHomeScreensActivity() {
-        Timber.i("onRequestPermissionsResult");
+        Timber.i("launchHomeScreensActivity");
 
         Intent intent = new Intent(getApplicationContext(), HomeScreensActivity.class);
         startActivity(intent);
@@ -60,11 +70,6 @@ public class MainActivity extends AppCompatActivity {
 //        startService(serviceIntent);
 
         finish();
-    }
-
-    @Override
-    public void onBackPressed() {
-        //do nothing
     }
 
     @Override
@@ -85,5 +90,11 @@ public class MainActivity extends AppCompatActivity {
                 finish();
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Timber.i("onBackPressed");
+        // Do nothing
     }
 }
