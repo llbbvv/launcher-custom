@@ -16,10 +16,10 @@ android {
         debug {
             applicationIdSuffix ".debug"
             versionNameSuffix "-debug"
-            buildConfigField("String", "APPSTORE_APPLICATION_ID", '"ai.elimu.appstore.debug"')
+            buildConfigField("String", "APPSTORE_APPLICATION_ID", '"ai.elimu.appstore_custom.debug"')
         }
         release {
-            buildConfigField("String", "APPSTORE_APPLICATION_ID", '"ai.elimu.appstore"')
+            buildConfigField("String", "APPSTORE_APPLICATION_ID", '"ai.elimu.appstore_custom"')
         }
     }
 
