@@ -16,7 +16,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,16 +52,16 @@ public class HomeScreensActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.i(getClass().getName(), "onCreate");
+        Timber.i( "onCreate");
         super.onCreate(savedInstanceState);
 
         // The Appstore app should store an "app-collection.json" file when the Applications downloaded belong to a Project's AppCollection
         // TODO: replace this with ContentProvider solution
         File jsonFile = new File(Environment.getExternalStorageDirectory() + "/.elimu-ai/appstore/", "app-collection.json");
-        Log.i(AppCollectionGenerator.class.getName(), "jsonFile: " + jsonFile);
-        Log.i(AppCollectionGenerator.class.getName(), "jsonFile.exists(): " + jsonFile.exists());
+        Timber.i("jsonFile: " + jsonFile);
+        Timber.i("jsonFile.exists(): " + jsonFile.exists());
         AppCollectionGson appCollection = AppCollectionGenerator.loadAppCollectionFromJsonFile(jsonFile);
-        Log.i(getClass().getName(), "appCollection.getAppCategories().size(): " + appCollection.getAppCategories().size());
+        Timber.i("appCollection.getAppCategories().size(): " + appCollection.getAppCategories().size());
 
         // Hide AppCategories that have been un-checked in the SettingsActivity
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -89,7 +88,7 @@ public class HomeScreensActivity extends AppCompatActivity {
         dotIndicator = (DotIndicator) findViewById(ai.elimu.launcher_custom.R.id.dotIndicator);
         dotIndicator.setNumberOfItems(appCategories.size());
 
-        Log.i(getClass().getName(), "onCreate currentPosition: " + currentPosition);
+        Timber.i( "onCreate currentPosition: " + currentPosition);
 
         // Set up the ViewPager with the sections adapter.
         viewPager = (ParallaxViewPager) findViewById(ai.elimu.launcher_custom.R.id.container);
@@ -98,13 +97,13 @@ public class HomeScreensActivity extends AppCompatActivity {
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-//                Log.i(getClass().getName(), "onPageScrolled");
+//                Timber.i( "onPageScrolled");
             }
 
             @Override
             public void onPageSelected(int position) {
-                Log.i(getClass().getName(), "onPageSelected");
-                Log.i(getClass().getName(), "position: " + position);
+                Timber.i( "onPageSelected");
+                Timber.i( "position: " + position);
 
                 dotIndicator.setSelectedItem(position, true);
                 currentPosition = position;
@@ -112,41 +111,40 @@ public class HomeScreensActivity extends AppCompatActivity {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                Log.i(getClass().getName(), "onPageScrollStateChanged");
-
+                Timber.i("onPageScrollStateChanged");
             }
         });
     }
 
     @Override
     protected void onStart() {
-        Log.i(getClass().getName(), "onStart");
+        Timber.i("onStart");
         super.onStart();
 
-        Log.i(getClass().getName(), "onStart currentPosition: " + currentPosition);
+        Timber.i("onStart currentPosition: " + currentPosition);
     }
 
     @Override
     protected void onResume() {
-        Log.i(getClass().getName(), "onResume");
+        Timber.i("onResume");
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        Log.i(getClass().getName(), "onPause");
+        Timber.i("onPause");
         super.onPause();
     }
 
     @Override
     protected void onStop() {
-        Log.i(getClass().getName(), "onStop");
+        Timber.i("onStop");
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        Log.i(getClass().getName(), "onDestroy");
+        Timber.i("onDestroy");
         super.onDestroy();
     }
 
@@ -159,9 +157,9 @@ public class HomeScreensActivity extends AppCompatActivity {
         }
 
         public static PlaceholderFragment newInstance(int sectionNumber) {
-            Log.i(PlaceholderFragment.class.getName(), "newInstance");
-            Log.i(PlaceholderFragment.class.getName(), "newInstance sectionNumber: " + sectionNumber);
-            Log.i(PlaceholderFragment.class.getName(), "newInstance currentPosition: " + currentPosition);
+            Timber.i("newInstance");
+            Timber.i("newInstance sectionNumber: " + sectionNumber);
+            Timber.i("newInstance currentPosition: " + currentPosition);
 
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
@@ -173,15 +171,15 @@ public class HomeScreensActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            Log.i(getClass().getName(), "onCreateView");
+            Timber.i("onCreateView");
 
-            Log.i(getClass().getName(), "onCreateView currentPosition: " + currentPosition);
+            Timber.i("onCreateView currentPosition: " + currentPosition);
             int sectionNumber = getArguments().getInt(ARG_SECTION_NUMBER);
-            Log.i(getClass().getName(), "onCreateView sectionNumber: " + sectionNumber);
+            Timber.i("onCreateView sectionNumber: " + sectionNumber);
 //            if ((sectionNumber == 0) && (currentPosition > 0)) {
 //                sectionNumber = currentPosition;
 //            }
-//            Log.i(getClass().getName(), "onCreateView sectionNumber: " + sectionNumber);
+//            Timber.i( "onCreateView sectionNumber: " + sectionNumber);
 
             View rootView = inflater.inflate(R.layout.fragment_home_screen, container, false);
 
@@ -197,24 +195,24 @@ public class HomeScreensActivity extends AppCompatActivity {
         }
 
         private void initializeAppCategory(LinearLayout linearLayoutAppGroupsContainer, int sectionNumber) {
-            Log.i(getClass().getName(), "initializeAppCategory");
+            Timber.i( "initializeAppCategory");
 
-            Log.i(getClass().getName(), "initializeAppCategory sectionNumber: " + sectionNumber);
+            Timber.i("initializeAppCategory sectionNumber: " + sectionNumber);
 
             final AppCategoryGson appCategory = appCategories.get(sectionNumber);
-            Log.i(getClass().getName(), "initializeAppCategory appCategory.getName(): " + appCategory.getName());
+            Timber.i("initializeAppCategory appCategory.getName(): " + appCategory.getName());
 
             List<AppGroupGson> appGroups = appCategory.getAppGroups();
-//            Log.i(getClass().getName(), "appGroups.size(): " + appGroups.size());
+//            Timber.i( "appGroups.size(): " + appGroups.size());
 
             for (AppGroupGson appGroup : appGroups) {
-//                Log.i(getClass().getName(), "appGroup.getApplications().size(): " + appGroup.getApplications().size());
+//                Timber.i("appGroup.getApplications().size(): " + appGroup.getApplications().size());
 
                 FlowLayout flowLayoutAppGroup = (FlowLayout) LayoutInflater.from(getActivity())
                         .inflate(R.layout.fragment_home_screen_app_group, linearLayoutAppGroupsContainer, false);
 
                 for (final ApplicationGson application : appGroup.getApplications()) {
-//                    Log.i(getClass().getName(), "application.getPackageName(): " + application.getPackageName());
+//                    Timber.i("application.getPackageName(): " + application.getPackageName());
 
                     final PackageManager packageManager = getActivity().getPackageManager();
 
@@ -229,7 +227,7 @@ public class HomeScreensActivity extends AppCompatActivity {
                             //This method was deprecated in API level 22
                             icon = resources.getDrawableForDensity(applicationInfo.icon, DisplayMetrics.DENSITY_XXHIGH);
                         }
-//                        Log.i(getClass().getName(), "icon: " + icon);
+//                        Timber.i("icon: " + icon);
                         LinearLayout linearLayoutAppView = (LinearLayout) LayoutInflater.from(getActivity())
                                 .inflate(R.layout.fragment_home_screen_app_group_app_view, flowLayoutAppGroup, false);
                         ImageView appIconImageView = (ImageView) linearLayoutAppView.findViewById(ai.elimu.launcher_custom.R.id.appIconImageView);
@@ -237,7 +235,7 @@ public class HomeScreensActivity extends AppCompatActivity {
                         appIconImageView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                Log.i(getClass().getName(), "appIconImageView onClick");
+                                Timber.i("appIconImageView onClick");
 
                                 Intent intent = packageManager.getLaunchIntentForPackage(application.getPackageName());
                                 intent.addCategory(Intent.CATEGORY_LAUNCHER);
@@ -250,13 +248,13 @@ public class HomeScreensActivity extends AppCompatActivity {
 
                         // Set app title
                         String applicationLabel = packageManager.getApplicationLabel(applicationInfo).toString();
-//                        Log.i(getClass().getName(), "applicationLabel: " + applicationLabel);
+//                        Timber.i("applicationLabel: " + applicationLabel);
                         TextView appLabelTextView = (TextView) linearLayoutAppView.findViewById(R.id.textViewAppLabel);
                         appLabelTextView.setText(applicationLabel);
 
                         flowLayoutAppGroup.addView(linearLayoutAppView);
                     } catch (PackageManager.NameNotFoundException e) {
-                        Log.e(getClass().getName(), "Application not installed: " + application.getPackageName());
+                        Timber.e("Application not installed: " + application.getPackageName());
                     }
                 }
 
@@ -268,13 +266,13 @@ public class HomeScreensActivity extends AppCompatActivity {
 
         @Override
         public void onStart() {
-            Log.i(getClass().getName(), "onStart");
+            Timber.i("onStart");
             super.onStart();
         }
 
         @Override
         public void onResume() {
-            Log.i(getClass().getName(), "onResume");
+            Timber.i( "onResume");
             super.onResume();
         }
     }
@@ -288,20 +286,20 @@ public class HomeScreensActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            Log.i(getClass().getName(), "getItem");
-            Log.i(getClass().getName(), "getItem position: " + position);
+            Timber.i("getItem");
+            Timber.i("getItem position: " + position);
             return PlaceholderFragment.newInstance(position);
         }
 
         @Override
         public int getCount() {
-            Log.i(getClass().getName(), "getCount");
+            Timber.i("getCount");
             return appCategories.size();
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            Log.i(getClass().getName(), "getPageTitle");
+            Timber.i("getPageTitle");
             return appCategories.get(position).getName();
         }
     }
@@ -309,7 +307,7 @@ public class HomeScreensActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Log.i(getClass().getName(), "onBackPressed");
+        Timber.i("onBackPressed");
 
         // Do nothing
     }

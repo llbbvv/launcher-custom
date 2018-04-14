@@ -5,11 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+
+import timber.log.Timber;
 
 public class StatusBarService extends Service {
 
@@ -20,13 +21,13 @@ public class StatusBarService extends Service {
 
     @Override
     public void onCreate() {
-        Log.i(getClass().getName(), "onCreate");
+        Timber.i("onCreate");
         super.onCreate();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i(getClass().getName(), "onStartCommand");
+        Timber.i("onStartCommand");
 
         preventStatusBarExpansion(getApplicationContext());
 
@@ -34,7 +35,7 @@ public class StatusBarService extends Service {
     }
 
     public static void preventStatusBarExpansion(Context context) {
-        Log.i(StatusBarService.class.getName(), "preventStatusBarExpansion");
+        Timber.i("preventStatusBarExpansion");
 
         WindowManager manager = ((WindowManager) context.getApplicationContext()
                 .getSystemService(Context.WINDOW_SERVICE));
@@ -79,7 +80,7 @@ public class StatusBarService extends Service {
 
         @Override
         public boolean onInterceptTouchEvent(MotionEvent ev) {
-            Log.i(getClass().getName(), "onInterceptTouchEvent");
+            Timber.i("onInterceptTouchEvent");
             return true;
         }
     }

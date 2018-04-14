@@ -18,7 +18,6 @@ import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
 import java.io.File;
 import java.util.List;
@@ -71,10 +70,10 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         // The Appstore app should store an "app-collection.json" file when the Applications downloaded belong to a Project's AppCollection
         // TODO: replace this with ContentProvider solution
         File jsonFile = new File(Environment.getExternalStorageDirectory() + "/.elimu-ai/appstore/", "app-collection.json");
-        Log.i(AppCollectionGenerator.class.getName(), "jsonFile: " + jsonFile);
-        Log.i(AppCollectionGenerator.class.getName(), "jsonFile.exists(): " + jsonFile.exists());
+        Timber.i("jsonFile: " + jsonFile);
+        Timber.i("jsonFile.exists(): " + jsonFile.exists());
         AppCollectionGson appCollection = AppCollectionGenerator.loadAppCollectionFromJsonFile(jsonFile);
-        Log.i(getClass().getName(), "appCollection.getAppCategories().size(): " + appCollection.getAppCategories().size());
+        Timber.i("appCollection.getAppCategories().size(): " + appCollection.getAppCategories().size());
         appCategories = appCollection.getAppCategories();
     }
 
