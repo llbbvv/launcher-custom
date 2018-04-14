@@ -293,7 +293,7 @@ public class HomeScreensActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            Timber.i("getCount");
+//            Timber.i("getCount");
             return appCategories.size();
         }
 

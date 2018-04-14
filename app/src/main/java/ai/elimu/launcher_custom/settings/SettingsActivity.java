@@ -18,18 +18,18 @@ import android.preference.SwitchPreference;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.List;
 
 import ai.elimu.launcher_custom.AppCollectionGenerator;
+import ai.elimu.launcher_custom.MainActivity;
 import ai.elimu.launcher_custom.R;
 import ai.elimu.launcher_custom.util.PreferenceKeyHelper;
 import ai.elimu.model.gson.project.AppCategoryGson;
 import ai.elimu.model.gson.project.AppCollectionGson;
 import timber.log.Timber;
-
-import static ai.elimu.launcher_custom.MainActivity.PERMISSION_REQUEST_READ_EXTERNAL_STORAGE;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -43,6 +43,8 @@ import static ai.elimu.launcher_custom.MainActivity.PERMISSION_REQUEST_READ_EXTE
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
+
+    private static final int PERMISSION_REQUEST_READ_EXTERNAL_STORAGE = 0;
 
     private static List<AppCategoryGson> appCategories;
 
@@ -84,14 +86,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         if (requestCode == PERMISSION_REQUEST_READ_EXTERNAL_STORAGE) {
             if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                // Permission granted
+                Timber.i("Permission granted");
 
-                // Restart application
-                Intent intent = getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
+                // Restart Activity
+                Intent intent = new Intent(this, SettingsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             } else {
-                // Permission denied
+                Timber.w("Permission denied");
+
+                Toast.makeText(getApplicationContext(), "Permission denied: READ_EXTERNAL_STORAGE", Toast.LENGTH_SHORT).show();
 
                 finish();
             }
