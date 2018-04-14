@@ -17,9 +17,9 @@ public class BaseApplication extends Application {
         Timber.plant(new Timber.DebugTree());
         Timber.i("onCreate");
 
-        if ("release".equals(BuildConfig.BUILD_TYPE)) {
-            // Initialize Crashlytics (crash reporting)
-            Fabric.with(this, new Crashlytics());
-        }
+//        if ("release".equals(BuildConfig.BUILD_TYPE)) {
+//            // Initialize Crashlytics (crash reporting)
+//            Fabric.with(this, new Crashlytics());
+//        }
     }
 }

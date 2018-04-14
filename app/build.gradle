@@ -8,8 +8,8 @@ android {
         applicationId "ai.elimu.launcher_custom"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 1003006
-        versionName "1.3.6"
+        versionCode 1003007
+        versionName "1.3.7-SNAPSHOT"
     }
 
     buildTypes {
