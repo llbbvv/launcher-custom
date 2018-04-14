@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Launcher (elimu.ai - custom project)</string>
+    <string name="title_activity_settings">Launcher Settings (elimu.ai - custom project)</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- AppCategories settings -->
+    <string name="pref_header_app_categories">AppCategories</string>
 </resources>

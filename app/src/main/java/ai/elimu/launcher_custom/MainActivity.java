@@ -3,6 +3,7 @@ package ai.elimu.launcher_custom;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -15,7 +16,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import ai.elimu.launcher_custom.service.StatusBarService;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,27 +27,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        // Log config
-        if (BuildConfig.DEBUG) {
-            // Log everything
-            Timber.plant(new Timber.DebugTree());
-        } else {
-            // Only log warnings and errors
-            Timber.plant(new Timber.Tree() {
-                @Override
-                protected void log(int priority, String tag, String message, Throwable throwable) {
-                    if (priority == Log.WARN) {
-                        Log.w(tag, message);
-                    } else if (priority == Log.ERROR) {
-                        Log.e(tag, message);
-                    }
-                }
-            });
-        }
         Timber.i("onCreate");
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_main);
 
         // Ask for read permission (needed for getting AppCollection from SD card)
         int permissionCheckReadExternalStorage = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -89,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Timber.i("onRequestPermissionsResult");
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == PERMISSION_REQUEST_READ_EXTERNAL_STORAGE) {
