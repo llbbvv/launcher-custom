@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
             // TODO: match available ContentProvider queries with the Appstore's versionCode
         } catch (PackageManager.NameNotFoundException e) {
             // The Appstore app has not been installed
-            Log.e(getClass().getName(), null, e);
+            Log.w(getClass().getName(), null, e);
             Toast.makeText(getApplicationContext(), "This launcher will not work until you install the Appstore app: " + BuildConfig.APPSTORE_APPLICATION_ID, Toast.LENGTH_LONG).show();
             // TODO: force the user to install the Appstore app
         }
