@@ -11,10 +11,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.Toast;
 
-import java.util.Map;
 import java.util.Set;
 
 import timber.log.Timber;
@@ -33,11 +31,11 @@ public class MainActivity extends AppCompatActivity {
         // Fetch Appstore version
         try {
             PackageInfo packageInfoAppstore = getPackageManager().getPackageInfo(BuildConfig.APPSTORE_APPLICATION_ID, 0);
-            Log.i(getClass().getName(), "packageInfoAppstore.versionCode: " + packageInfoAppstore.versionCode);
+            Timber.i("packageInfoAppstore.versionCode: " + packageInfoAppstore.versionCode);
             // TODO: match available ContentProvider queries with the Appstore's versionCode
         } catch (PackageManager.NameNotFoundException e) {
             // The Appstore app has not been installed
-            Log.w(getClass().getName(), null, e);
+            Timber.w(null, e);
             Toast.makeText(getApplicationContext(), "This launcher will not work until you install the Appstore app: " + BuildConfig.APPSTORE_APPLICATION_ID, Toast.LENGTH_LONG).show();
             // TODO: force the user to install the Appstore app
         }
